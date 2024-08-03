@@ -1007,6 +1007,7 @@ function ContainerContent:Slider(text, desc, min, max, start, step, callback)
     if not step then
         step = 1
     end
+
     local Slider = Instance.new("TextButton")
     local SliderCorner = Instance.new("UICorner")
     local Title = Instance.new("TextLabel")
@@ -1200,9 +1201,9 @@ function ContainerContent:Slider(text, desc, min, max, start, step, callback)
 
     local function move(input)
         local pos = UDim2.new(math.clamp((input.Position.X - SlideFrame.AbsolutePosition.X) / SlideFrame.AbsoluteSize.X, 0, 1), -6, -1.30499995, 0)
-        CurrentValueFrame:TweenSize(UDim2.new(math.clamp((input.Position.X - SlideFrame.AbsolutePosition.X) / SlideFrame.AbsoluteSize.X, 0, 1), 0, 0, 3), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
-        SlideCircle:TweenPosition(pos, Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
-        local value = math.floor(((pos.X.Scale * (max - min) + min) / step) + 0.5) * step
+        local value = math.clamp(math.round(((pos.X.Scale * (max - min) + min) / step)) * step, min, max)
+        CurrentValueFrame:TweenSize(UDim2.new((value - min) / (max - min), 0, 0, 3), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
+        SlideCircle:TweenPosition(UDim2.new((value - min) / (max - min), -6, -1.30499995, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
         Value.Text = tostring(value)
         pcall(callback, value)
     end
@@ -1226,9 +1227,10 @@ function ContainerContent:Slider(text, desc, min, max, start, step, callback)
     end)
 
     function SliderFunc:Change(tochangevalue)
+        tochangevalue = math.clamp(math.round((tochangevalue - min) / step) * step, min, max)
         CurrentValueFrame:TweenSize(UDim2.new((tochangevalue - min) / (max - min), 0, 0, 3), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
         SlideCircle:TweenPosition(UDim2.new((tochangevalue - min) / (max - min), -6, -1.30499995, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
-        Value.Text = tostring(tochangevalue and math.floor((tochangevalue - min) * (max - min) / step + min) or 0)
+        Value.Text = tostring(tochangevalue)
         pcall(callback, tochangevalue)
     end
 
