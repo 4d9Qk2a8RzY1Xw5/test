@@ -997,7 +997,7 @@ function Flux:Window(text, bottom,mainclr,toclose)
 			Container.CanvasSize = UDim2.new(0, 0, 0, ContainerLayout.AbsoluteContentSize.Y)
 		end
 		
-		function ContainerContent:Slider(text, desc, min, max, start, step, callback)
+function ContainerContent:Slider(text, desc, min, max, start, step, callback)
     local SliderFunc = {}
     local SliderDescToggled = false
     local dragging = false
@@ -1101,13 +1101,13 @@ function Flux:Window(text, bottom,mainclr,toclose)
     CurrentValueFrame.Parent = SlideFrame
     CurrentValueFrame.BackgroundColor3 = PresetColor
     CurrentValueFrame.BorderSizePixel = 0
-    CurrentValueFrame.Size = UDim2.new((start or 0) / max, 0, 0, 3)
+    CurrentValueFrame.Size = UDim2.new((start - min) / (max - min), 0, 0, 3)
 
     SlideCircle.Name = "SlideCircle"
     SlideCircle.Parent = SlideFrame
     SlideCircle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     SlideCircle.BackgroundTransparency = 1.000
-    SlideCircle.Position = UDim2.new((start or 0)/max, -6, -1.30499995, 0)
+    SlideCircle.Position = UDim2.new((start - min) / (max - min), -6, -1.30499995, 0)
     SlideCircle.Size = UDim2.new(0, 11, 0, 11)
     SlideCircle.Image = "rbxassetid://3570695787"
     SlideCircle.ImageColor3 = PresetColor
@@ -1139,7 +1139,7 @@ function Flux:Window(text, bottom,mainclr,toclose)
     Value.Position = UDim2.new(2.27693367, 0, 0, 0)
     Value.Size = UDim2.new(0, 113, 0, 41)
     Value.Font = Enum.Font.Gotham
-    Value.Text = tostring(start and math.floor((start / max) * (max - min) + min) or 0)
+    Value.Text = tostring(start)
     Value.TextColor3 = Color3.fromRGB(255, 255, 255)
     Value.TextSize = 15.000
     Value.TextTransparency = 0.300
@@ -1202,7 +1202,7 @@ function Flux:Window(text, bottom,mainclr,toclose)
         local pos = UDim2.new(math.clamp((input.Position.X - SlideFrame.AbsolutePosition.X) / SlideFrame.AbsoluteSize.X, 0, 1), -6, -1.30499995, 0)
         CurrentValueFrame:TweenSize(UDim2.new(math.clamp((input.Position.X - SlideFrame.AbsolutePosition.X) / SlideFrame.AbsoluteSize.X, 0, 1), 0, 0, 3), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
         SlideCircle:TweenPosition(pos, Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
-        local value = math.floor(((pos.X.Scale * max) / step) + 0.5) * step
+        local value = math.floor(((pos.X.Scale * (max - min) + min) / step) + 0.5) * step
         Value.Text = tostring(value)
         pcall(callback, value)
     end
@@ -1226,9 +1226,9 @@ function Flux:Window(text, bottom,mainclr,toclose)
     end)
 
     function SliderFunc:Change(tochangevalue)
-        CurrentValueFrame:TweenSize(UDim2.new((tochangevalue or 0) / max, 0, 0, 3), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
-        SlideCircle:TweenPosition(UDim2.new((tochangevalue or 0) / max, -6, -1.30499995, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
-        Value.Text = tostring(tochangevalue and math.floor((tochangevalue / max) * (max - min) + min) or 0)
+        CurrentValueFrame:TweenSize(UDim2.new((tochangevalue - min) / (max - min), 0, 0, 3), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
+        SlideCircle:TweenPosition(UDim2.new((tochangevalue - min) / (max - min), -6, -1.30499995, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
+        Value.Text = tostring(tochangevalue and math.floor((tochangevalue - min) * (max - min) / step + min) or 0)
         pcall(callback, tochangevalue)
     end
 
