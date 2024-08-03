@@ -1169,8 +1169,7 @@ function ContainerContent:Slider(text, desc, min, max, start, step, callback)
                 TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
                 {Rotation = 180}
             ):Play()
-            wait(.2)
-            Description.TextTransparency = 0.3
+            Description.TextTransparency = 0
             SliderDescToggled = true
         else
             Slider:TweenSize(UDim2.new(0, 457, 0, 60), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true)
@@ -1201,10 +1200,10 @@ function ContainerContent:Slider(text, desc, min, max, start, step, callback)
 
     local function move(input)
         local pos = UDim2.new(math.clamp((input.Position.X - SlideFrame.AbsolutePosition.X) / SlideFrame.AbsoluteSize.X, 0, 1), -6, -1.30499995, 0)
-        local value = math.clamp(math.round(((pos.X.Scale * (max - min) + min) / step)) * step, min, max)
+        local value = math.clamp(math.floor(((pos.X.Scale * (max - min) + min) / step + 0.5)) * step, min, max)
         CurrentValueFrame:TweenSize(UDim2.new((value - min) / (max - min), 0, 0, 3), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
         SlideCircle:TweenPosition(UDim2.new((value - min) / (max - min), -6, -1.30499995, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
-        Value.Text = tostring(value)
+        Value.Text = string.format("%.2f", value)
         pcall(callback, value)
     end
 
@@ -1227,15 +1226,16 @@ function ContainerContent:Slider(text, desc, min, max, start, step, callback)
     end)
 
     function SliderFunc:Change(tochangevalue)
-        tochangevalue = math.clamp(math.round((tochangevalue - min) / step) * step, min, max)
+        tochangevalue = math.clamp(math.floor((tochangevalue - min) / step + 0.5) * step, min, max)
         CurrentValueFrame:TweenSize(UDim2.new((tochangevalue - min) / (max - min), 0, 0, 3), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
         SlideCircle:TweenPosition(UDim2.new((tochangevalue - min) / (max - min), -6, -1.30499995, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .2, true)
-        Value.Text = tostring(tochangevalue)
+        Value.Text = string.format("%.2f", tochangevalue)
         pcall(callback, tochangevalue)
     end
 
     return SliderFunc
 end
+
 
 		function ContainerContent:Dropdown(text,list,callback)
 			local DropFunc = {}
