@@ -1,11 +1,11 @@
 local Flux = {RainbowColorValue = 0, HueSelectionPosition = 0}
-local PresetColor = Color3.fromRGB(66, 134, 255)
+local PresetColor = Color3.fromRGB(5, 124, 194)
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
-local CloseBind = Enum.KeyCode.RightControl
+local CloseBind = Enum.KeyCode.LeftControl
 
 local FluxLib = Instance.new("ScreenGui")
 FluxLib.Name = "FluxLib"
